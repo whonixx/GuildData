@@ -17,6 +17,8 @@ spacer = "_" * 50
 space6 = "_" * 60
 dashes = "#" * 90
 
+
+# checks to see if "stats" directory exist. If it does, it moves on. Otherwise, it creates a new directory called "stats" and created a new file called "strikeTracker.csv" and writes the first line as a header with 4 prenamed columns.
 try:
     listOfFiles = glob.glob('stats/*')
     CSV_FILE = max(listOfFiles, key=os.path.getctime)
@@ -31,6 +33,7 @@ except ValueError:
         writer.writerow(data)
 
 
+# loads the config file and applies the Guild ID to the splinterlands API to pull stats for the desired guild. It then prints out a dataframe to show stats and provides an option to save the stats into the "stats" folder.
 def getCurrentStats():
     f = open("config.json")
     data = json.load(f)
@@ -48,7 +51,6 @@ def getCurrentStats():
             storage[k] = [v]
         else:
             storage[k].append(v)
-
             
 
     playerList = []
@@ -94,6 +96,7 @@ def getCurrentStats():
         mainMenu()
 
 
+# reads the "strikeTracker" file and gives the option to add a strike to a member of the guild.
 def addStrike():
     today = date.today()
     df = pd.read_csv('stats/strikeTracker.csv')
@@ -109,6 +112,7 @@ def addStrike():
             df.at[int(f'{playerIndex}'), 'Strike 3'] = today
         df.to_csv('stats/strikeTracker.csv', index=False)
         print(df)
+        retToMainMenu()
     except ValueError:
             print(f'{RED}Invalid Data. Returning to Main Menu{RESET}')
             mainMenu()
@@ -118,6 +122,7 @@ def addStrike():
         mainMenu()
 
 
+# reads the "strikeTracker" file and prints out a current dataframe.
 def viewStrikes():
     df = pd.read_csv('stats/strikeTracker.csv')
     print(space6)
@@ -127,6 +132,7 @@ def viewStrikes():
     retToMainMenu()
 
 
+# provides a menu to give options in relation to guild member strikes.
 def strikeTrackerMenu():
     os.system('cls')
     options = input(f'''
@@ -153,6 +159,7 @@ def strikeTrackerMenu():
         mainMenu()
 
 
+# allows you to add a player to the guild member list
 def addPlayer():
     newPlayer = input('New players name: ').lower()
     df = pd.DataFrame({
@@ -185,6 +192,7 @@ def addPlayer():
         retToMainMenu()
 
 
+# allows you to remove a player from the guild member list
 def removePlayer():
     df = pd.read_csv('stats/strikeTracker.csv')
     print(players)
@@ -197,6 +205,7 @@ def removePlayer():
     retToMainMenu()
 
 
+# allows you to import an entire team by providing a Guild ID
 def importTeam():
     guildID = input("Guild ID: ")
     API = f"https://api.splinterlands.io/guilds/members?guild_id={guildID}"
@@ -235,6 +244,7 @@ def importTeam():
     retToMainMenu()
 
 
+# will ask you to input two different files from the "stats" folder and compares the two different weeks and provides a dataframe to show you the comparison.
 def compareTwoWeeks():
     try:
         df1 = input('Previous Week CSV: ' )
@@ -264,6 +274,7 @@ def compareTwoWeeks():
         compareTwoWeeks()
 
 
+# prints out a detailed help menu that explains what utility each function provides.
 def helpMe():
     os.system('cls')
     print(f"""
@@ -310,7 +321,7 @@ def helpMe():
 
     B: Strike Tracker
 
-    - This feauture is useful if you have a "3 strikes and you're out" rule as it allows
+    - This feature is useful if you have a "3 strikes and you're out" rule as it allows
     you to keep track of the players and their strikes. You may also choose to view the 
     Strike Tracker dataframe which will show you how many strikes each player has and when
     they occurred. At this time, there is no automatic removal of strikes so you will have
@@ -378,6 +389,7 @@ def helpMe():
     retToMainMenu()
 
 
+# main menu to show what options the app has to offer.
 def mainMenu():
     options = input(f"""
     A: Build Contribution Report
@@ -418,6 +430,7 @@ def mainMenu():
         mainMenu()
 
 
+# prints out a banner/title for the app when intially opened.
 def banner():
     print("""
     #################################################
@@ -428,6 +441,7 @@ def banner():
     """)
 
 
+# gives easy access of returning to the main menu
 def retToMainMenu():
     option = input("Return to Main Menu: [Y/N]? ")
     if option.lower() == "y":
